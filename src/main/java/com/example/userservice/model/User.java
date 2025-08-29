@@ -11,13 +11,13 @@ public class User {
     private Long id;
 
     private String name;
-    private String emial;
+    private String email;
 
     public User() {}
 
-    public User(String name, String emial) {
+    public User(String name, String email) {
         this.name = name;
-        this.emial = emial;
+        this.email = email;
     }
 
     public Long getId() {
@@ -36,11 +36,11 @@ public class User {
         this.name = name;
     }
 
-    public String getEmial() {
-        return emial;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmial(String emial) {
-        this.emial = emial;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -40,7 +40,7 @@ public class UserController {
         return userRepository.findById(id)
                 .map(existing -> {
                     existing.setName(user.getName());
-                    existing.setEmial(user.getEmial());
+                    existing.setEmail(user.getEmail());
                     return userRepository.save(existing);
                 })
                 .orElse(null);
