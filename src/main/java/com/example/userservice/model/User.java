@@ -2,6 +2,8 @@ package com.example.userservice.model;
 
 import jakarta.persistence.*;
 
+
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -11,13 +13,18 @@ public class User {
     private Long id;
 
     private String name;
+
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {}
 
-    public User(String name, String email) {
+    public User(String name, String email, Role role) {
         this.name = name;
         this.email = email;
+        this.role = role;
     }
 
     public Long getId() {
@@ -42,5 +49,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.model.Role;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +33,7 @@ class UserControllerTest {
     @Test
     void testGetUsers() throws Exception {
         Mockito.when(userRepository.findAll()).thenReturn(
-                List.of(new User("Adam", "adam@example.com"))
+                List.of(new User("Adam", "adam@example.com", Role.USER))
         );
 
         mockMvc.perform(get("/users"))
@@ -43,8 +44,8 @@ class UserControllerTest {
 
     @Test
     void testPostUsers() throws Exception {
-        User user = new User("Adam","adam@example.com");
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(new User("Adam","adam@example.com"));
+        User user = new User("Adam","adam@example.com",Role.USER);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(new User("Adam","adam@example.com",Role.USER));
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,10 +57,10 @@ class UserControllerTest {
 
     @Test
     void testPutUsers() throws Exception {
-        User existingUser = new User("Adam","adam@example.com");
+        User existingUser = new User("Adam","adam@example.com",Role.USER);
         existingUser.setId(1L);
 
-        User updatedUser = new User("Adam_2","adam_2@example.com");
+        User updatedUser = new User("Adam_2","adam_2@example.com",Role.USER);
         updatedUser.setId(1L);
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));

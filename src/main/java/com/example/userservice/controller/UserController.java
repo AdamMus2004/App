@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.model.Role;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class UserController {
     // GET /users
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findByRole(Role.USER);
     }
 
     // GET /users/{id}
@@ -31,6 +32,7 @@ public class UserController {
     // POST /users
     @PostMapping
     public User postUser(@RequestBody User user) {
+        user.setRole(Role.USER);
         return userRepository.save(user);
     }
 
