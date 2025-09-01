@@ -33,7 +33,7 @@ class UserControllerTest {
     @Test
     void testGetUsers() throws Exception {
         Mockito.when(userRepository.findAll()).thenReturn(
-                List.of(new User("Adam", "adam@example.com", Role.USER))
+                List.of(new User("Adam", "adam@example.com", "123",Role.USER))
         );
 
         mockMvc.perform(get("/users"))
@@ -44,8 +44,8 @@ class UserControllerTest {
 
     @Test
     void testPostUsers() throws Exception {
-        User user = new User("Adam","adam@example.com",Role.USER);
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(new User("Adam","adam@example.com",Role.USER));
+        User user = new User("Adam","adam@example.com","123",Role.USER);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(new User("Adam","adam@example.com","123",Role.USER));
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,10 +57,10 @@ class UserControllerTest {
 
     @Test
     void testPutUsers() throws Exception {
-        User existingUser = new User("Adam","adam@example.com",Role.USER);
+        User existingUser = new User("Adam","adam@example.com","123",Role.USER);
         existingUser.setId(1L);
 
-        User updatedUser = new User("Adam_2","adam_2@example.com",Role.USER);
+        User updatedUser = new User("Adam_2","adam_2@example.com","123",Role.USER);
         updatedUser.setId(1L);
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
