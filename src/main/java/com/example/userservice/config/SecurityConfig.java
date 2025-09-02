@@ -18,9 +18,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())      // wyłącza CSRF
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // wszystkie endpointy publiczne
-                .formLogin(form -> form.disable()); // wyłącza domyślny formularz logowania
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/users").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
         return http.build();
     }
 }

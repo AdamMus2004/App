@@ -3,6 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.model.Role;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // GET /users
@@ -33,6 +36,7 @@ public class UserController {
     @PostMapping
     public User postUser(@RequestBody User user) {
         user.setRole(Role.USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -43,6 +47,7 @@ public class UserController {
                 .map(existing -> {
                     existing.setName(user.getName());
                     existing.setEmail(user.getEmail());
+                    existing.setPassword(user.getPassword());
                     return userRepository.save(existing);
                 })
                 .orElse(null);
@@ -52,6 +57,10 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
     }
-
+    @DeleteMapping
+    public void deleteAllUsers(){
+        List<User> users = userRepository.findByRole(Role.USER);
+        userRepository.deleteAll(users);
+    }
 
 }
