@@ -32,13 +32,6 @@ public class UserController {
         return userRepository.findById(id).orElse(null);
     }
 
-    // POST /users
-    @PostMapping
-    public User postUser(@RequestBody User user) {
-        user.setRole(Role.USER);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 
     //PUT /users/{id}
     @PutMapping("/{id}")

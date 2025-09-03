@@ -35,14 +35,6 @@ public class AdminController {
         return userRepository.findById(id).orElse(null);
     }
 
-    //POST
-    @PostMapping("/users")
-    public User postAdminUser(@RequestBody User user) {
-        user.setRole(Role.ADMIN);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
     //PUT
     @PutMapping("/users/{id}")
     public User putAdminUser(@RequestBody User user, @PathVariable Long id) {
