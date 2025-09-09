@@ -65,6 +65,15 @@ public class AuthController {
                 })
                 .orElseGet(() -> ResponseEntity.status(401).body(Map.of("error","Invalid credential")));
     }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody Map<String, String> body) {
+        String token = body.get("token");
+        if (token == null) {
+            return ResponseEntity.badRequest().body(Map.of("error","token required"));
+        }
+        authService.removeToken(token);
+        return ResponseEntity.ok(Map.of("message","Logged out successfully"));
+    }
 
 
 

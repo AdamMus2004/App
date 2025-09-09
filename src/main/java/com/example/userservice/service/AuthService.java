@@ -13,23 +13,36 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final Map<String, Long> tokens = new ConcurrentHashMap<>();
+    private final class TokenData {
+        Long userID;
+        long expiresAt;
+    }
+    private final Map<String, TokenData> tokens = new ConcurrentHashMap<>();
 
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+
     public String generateTokenForUser(User user) {
         String token = UUID.randomUUID().toString();
-        tokens.put(token,user.getId());
+        TokenData data = new TokenData();
+        data.userID=user.getId();
+        data.expiresAt = System.currentTimeMillis() + (60000);
+        tokens.put(token,data);
         return token;
     }
+
     public Optional<User> getUserForToken(String token) {
-        Long userId = tokens.get(token);
-        if (userId == null) return Optional.empty();
-        return userRepository.findById(userId);
+        TokenData data = tokens.get(token);
+        if (data == null || data.expiresAt < System.currentTimeMillis()) {
+            tokens.remove(token);
+            return Optional.empty();
+        }
+        return userRepository.findById(data.userID);
     }
+
     public void removeToken(String token) {
         tokens.remove(token);
     }
-
 }
