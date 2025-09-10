@@ -28,7 +28,7 @@ public class AuthService {
         String token = UUID.randomUUID().toString();
         TokenData data = new TokenData();
         data.userID=user.getId();
-        data.expiresAt = System.currentTimeMillis() + (60000);
+        data.expiresAt = System.currentTimeMillis() + (600000);
         tokens.put(token,data);
         return token;
     }

@@ -6,11 +6,9 @@ import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -75,6 +73,20 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message","Logged out successfully"));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body(Map.of("Error","Not authenticated"));
+        }
 
-
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .map(user -> ResponseEntity.ok(Map.of(
+                        "id",user.getId(),
+                        "email",user.getEmail(),
+                        "name",user.getName(),
+                        "role",user.getRole()
+                )))
+                .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
+    }
 }

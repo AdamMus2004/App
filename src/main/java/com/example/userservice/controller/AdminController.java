@@ -4,11 +4,13 @@ package com.example.userservice.controller;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.example.userservice.model.Role;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -26,35 +28,36 @@ public class AdminController {
     // GET
     @GetMapping("/users")
     public List<User> getAllAdminUsers() {
-        return userRepository.findByRole(Role.ADMIN);
+        return userRepository.findAll();
     }
 
-    //GET
-    @GetMapping("/users/{id}")
-    public User getAdminUser(@PathVariable Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    //PUT
-    @PutMapping("/users/{id}")
-    public User putAdminUser(@RequestBody User user, @PathVariable Long id) {
+    //PUT /admin/users/{id}/role
+    @PutMapping("/users/{id}/role")
+    public ResponseEntity<?> changeRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
         return userRepository.findById(id)
-                .map(existing -> {
-                    existing.setEmail(user.getEmail());
-                    existing.setName(user.getName());
-                    existing.setPassword(user.getPassword());
-                    return userRepository.save(existing);
-                }).orElse(null);
+                .map(user -> {
+                    try {
+                        Role newRole = Role.valueOf(body.get("role").toUpperCase());
+                        user.setRole(newRole);
+                        userRepository.save(user);
+                        return ResponseEntity.ok(Map.of("message","Role updated"));
+                    } catch (IllegalArgumentException e) {
+                        return ResponseEntity.badRequest().body(Map.of("error","Invalid role"));
+                    }
+                })
+                .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
-    //DELETE
+
+
+    //DELETE /admin/users/{id}
     @DeleteMapping("/users/{id}")
-    void deleteAdminUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
-    }
-    @DeleteMapping("/users")
-    void deleteAllAdmins(){
-        List<User> admins = userRepository.findByRole(Role.ADMIN);
-        userRepository.deleteAll(admins);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.ok(Map.of("message","User deleted"));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error","User not found"));
+        }
     }
 
 }
