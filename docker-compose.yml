@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:15
-    container_name: postgres-userservice
+    container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: userservice
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
@@ -17,7 +17,7 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userservice
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userservice_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:
@@ -28,7 +28,7 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userservice
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/profileservice_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:

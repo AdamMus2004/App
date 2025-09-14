@@ -10,6 +10,7 @@ public class Profile {
     private Long id;
 
     private Long userId;
+
     private String bio;
     private String avatarUrl;
 
