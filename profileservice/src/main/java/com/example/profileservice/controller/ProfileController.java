@@ -2,46 +2,38 @@ package com.example.profileservice.controller;
 
 import com.example.profileservice.dto.ProfileDTO;
 import com.example.profileservice.dto.ProfileResponseDTO;
-import com.example.profileservice.model.Profile;
-import com.example.profileservice.repository.ProfileRepository;
+import com.example.profileservice.service.ProfileService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/profiles")
 public class ProfileController {
-    private final ProfileRepository profileRepository;
+   private final ProfileService profileService;
 
-    public ProfileController(ProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
-
     @GetMapping
-    public List<ProfileResponseDTO> getAll() {
-        return profileRepository.findAll().
-                stream()
-                .map(profile -> new ProfileResponseDTO(profile.getId(),profile.getUserId(),profile.getBio(),profile.getAvatarUrl()))
-                .collect(Collectors.toList());
+    public ResponseEntity<List<ProfileResponseDTO>> getAllProfiles(){
+        return ResponseEntity.ok(profileService.getAllProfiles());
     }
     @PostMapping
-    public ProfileResponseDTO create(@Valid @RequestBody ProfileDTO profileDTO) {
-        Profile profile = new Profile(profileDTO.getUserId(), profileDTO.getBio(), profileDTO.getAvatarUrl());
-        Profile saved = profileRepository.save(profile);
-        return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(),saved.getAvatarUrl());
+    public ProfileResponseDTO create(@Valid @RequestBody ProfileDTO profileDTO,
+                                     @RequestHeader("Authorization") String authHeader) {
+        return profileService.createProfile(profileDTO, authHeader);
     }
 
     @GetMapping("/{id}")
-    public ProfileResponseDTO getProfile(@PathVariable Long id) {
-        Profile profile = profileRepository.findById(id).orElseThrow();
-        return new ProfileResponseDTO(profile.getId(), profile.getUserId(), profile.getBio(), profile.getAvatarUrl());
+    public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(profileService.getProfileById(id));
     }
-
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        profileRepository.deleteById(id);
+    public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
+        profileService.deleteProfile(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

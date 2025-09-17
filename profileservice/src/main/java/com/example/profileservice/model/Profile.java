@@ -53,4 +53,5 @@ public class Profile {
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
+
 }

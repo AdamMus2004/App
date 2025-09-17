@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   userservice:
     build: ./userservice
@@ -22,6 +24,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:
       - "8080:8080"
+    networks:
+      - app-network
   profileservice:
     build: ./profileservice
     container_name: profileservice
@@ -33,6 +37,12 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:
       - "8081:8081"
+    networks:
+      - app-network
+
 
 volumes:
   postgres_data:
+networks:
+  app-network:
+    driver: bridge
