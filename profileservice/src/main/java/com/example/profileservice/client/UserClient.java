@@ -13,4 +13,6 @@ public interface UserClient {
     @GetMapping("/users/{id}")
     UserResponseDTO getUserById(@PathVariable Long id, @RequestHeader("Authorization") String authHeader);
 
+    @GetMapping("/users/{id}")
+    UserResponseDTO getUserById(@PathVariable Long id);
 }

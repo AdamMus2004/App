@@ -22,12 +22,14 @@ public class ProfileService {
         this.userClient = userClient;
         this.profileRepository = profileRepository;
     }
-    public List<ProfileResponseDTO> getAllProfiles() {
+
+    public List<ProfileResponseDTO> getAllProfiles(String authHeader) {
         return profileRepository.findAll().stream().map(profile -> {
-            UserResponseDTO user = userClient.getUserById(profile.getId());
+            UserResponseDTO user = userClient.getUserById(profile.getUserId(), authHeader);
             return new ProfileResponseDTO(profile.getId(),profile.getUserId(),profile.getBio(),profile.getAvatarUrl(),user);
         }).collect(Collectors.toList());
     }
+
     public ProfileResponseDTO createProfile(ProfileDTO profileDTO, String authHeader) {
         UserResponseDTO user;
         try {
@@ -43,15 +45,24 @@ public class ProfileService {
         return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(), saved.getAvatarUrl(), user);
     }
 
-    public ProfileResponseDTO getProfileById(Long id) {
+    public ProfileResponseDTO getProfileById(Long id, String authHeader) {
         Profile profile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile not found"));
-        UserResponseDTO user = userClient.getUserById(profile.getUserId());
+        UserResponseDTO user = userClient.getUserById(profile.getUserId(), authHeader);
         return new ProfileResponseDTO(profile.getId(), profile.getUserId(), profile.getBio(), profile.getAvatarUrl(), user);
     }
-    public void deleteProfile(Long id) {
-        if (!profileRepository.existsById(id)) {
-            throw new NoSuchElementException("Profile not found");
+    public void deleteProfile(Long id, String authHeader) {
+        Profile profile = profileRepository.findById(id)
+                        .orElseThrow(()-> new NoSuchElementException(("Profile not found")));
+        UserResponseDTO user;
+        try {
+            user = userClient.getUserById(profile.getUserId(),authHeader);
+        }catch (FeignException fe) {
+            throw new RuntimeException("Error verifying user in userservice", fe);
         }
-        profileRepository.deleteById(id);
+
+        if (!"ADMIN".equalsIgnoreCase(user.getRole())) {
+            throw new SecurityException("Only ADMIN can delete profiles!");
+        }
+        profileRepository.delete(profile);
     }
 }

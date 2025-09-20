@@ -87,7 +87,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
         if (authentication == null) {
-            return ResponseEntity.badRequest().body(Map.of("Error","Not authenticated"));
+            return ResponseEntity.badRequest().body(Map.of("error","Not authenticated"));
         }
 
         String email = authentication.getName();

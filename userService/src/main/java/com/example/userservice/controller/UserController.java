@@ -23,8 +23,8 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // GET /users/me
-    @GetMapping("/me")
+    // GET /users/{id}
+    @GetMapping("/{id}")
     public ResponseEntity<?> getMyData(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
                 .map(user -> ResponseEntity.ok(Map.of(
@@ -36,7 +36,7 @@ public class UserController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error", "User not found")));
     }
     // PUT /users/me
-    @PostMapping
+    @PostMapping("/me")
     public ResponseEntity<?> updateMyData(Authentication authentication, @RequestBody Map<String,String> updates) {
         return userRepository.findByEmail(authentication.getName())
                 .map(user -> {
