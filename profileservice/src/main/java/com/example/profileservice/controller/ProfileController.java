@@ -24,9 +24,10 @@ public class ProfileController {
     }
 
     @PostMapping
-    public ProfileResponseDTO create(@Valid @RequestBody ProfileDTO profileDTO,
+    public ResponseEntity<ProfileResponseDTO> create(@Valid @RequestBody ProfileDTO profileDTO,
                                      @RequestHeader("Authorization") String authHeader) {
-        return profileService.createProfile(profileDTO, authHeader);
+        ProfileResponseDTO profile = profileService.createProfile(profileDTO, authHeader);
+        return ResponseEntity.status(201).body(profile);
     }
 
     @GetMapping("/{id}")

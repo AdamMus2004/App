@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public class ProfileDTO {
 
-    @NotNull(message = "userId cannot be null")
-    private Long userId;
-
     @NotBlank(message = "Bio cannot be empty")
     private String bio;
 
@@ -16,15 +13,11 @@ public class ProfileDTO {
 
     ProfileDTO() {}
 
-    public ProfileDTO(Long userId, String bio, String avatarUrl) {
-        this.userId = userId;
+    public ProfileDTO(String bio, String avatarUrl) {
         this.bio = bio;
         this.avatarUrl = avatarUrl;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
     public String getBio() {
         return bio;

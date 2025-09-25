@@ -33,14 +33,17 @@ public class ProfileService {
     public ProfileResponseDTO createProfile(ProfileDTO profileDTO, String authHeader) {
         UserResponseDTO user;
         try {
-            user = userClient.getUserById(profileDTO.getUserId(), authHeader);
+            user = userClient.getMe(authHeader);
         } catch (FeignException.NotFound nf) {
-            throw new NoSuchElementException("User with id " + profileDTO.getUserId() + " not found");
+            throw new NoSuchElementException("Authenticated user not found");
         } catch (FeignException fe) {
             throw new RuntimeException("Error calling userservice: " + fe.status(), fe);
         }
+        if (profileRepository.findById(user.getId()).isPresent()) {
+            throw new IllegalStateException("Profile already exists for this user");
+        }
 
-        Profile profile = new Profile(profileDTO.getUserId(), profileDTO.getBio(), profileDTO.getAvatarUrl());
+        Profile profile = new Profile(user.getId(), profileDTO.getBio(), profileDTO.getAvatarUrl());
         Profile saved = profileRepository.save(profile);
         return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(), saved.getAvatarUrl(), user);
     }
