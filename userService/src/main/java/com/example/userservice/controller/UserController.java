@@ -25,19 +25,18 @@ public class UserController {
 
     // GET /users/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMyData(Authentication authentication) {
-        return userRepository.findByEmail(authentication.getName())
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
                 .map(user -> ResponseEntity.ok(Map.of(
                         "id", user.getId(),
-                        "email", user.getEmail(),
+                        "email",user.getEmail(),
                         "name", user.getName(),
-                        "role", user.getRole()
-                )))
-                .orElse(ResponseEntity.status(404).body(Map.of("error", "User not found")));
+                        "role",user.getRole()
+                ))).orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
     // PUT /users/me
-    @PostMapping("/me")
-    public ResponseEntity<?> updateMyData(Authentication authentication, @RequestBody Map<String,String> updates) {
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyUSer(Authentication authentication, @RequestBody Map<String,String> updates) {
         return userRepository.findByEmail(authentication.getName())
                 .map(user -> {
                     if (updates.containsKey("name")) user.setName(updates.get("name"));

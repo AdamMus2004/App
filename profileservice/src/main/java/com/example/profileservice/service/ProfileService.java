@@ -23,22 +23,24 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    public List<ProfileResponseDTO> getAllProfiles(String authHeader) {
-        return profileRepository.findAll().stream().map(profile -> {
-            UserResponseDTO user = userClient.getUserById(profile.getUserId(), authHeader);
-            return new ProfileResponseDTO(profile.getId(),profile.getUserId(),profile.getBio(),profile.getAvatarUrl(),user);
-        }).collect(Collectors.toList());
+    public List<ProfileResponseDTO> getAllProfiles() {
+        return profileRepository.findAll().stream()
+                .map(profile -> {
+                    UserResponseDTO user = userClient.getUserById(profile.getUserId());
+                    return new ProfileResponseDTO(profile.getId(), profile.getUserId(),
+                            profile.getBio(), profile.getAvatarUrl(), user);
+                })
+                .collect(Collectors.toList());
     }
 
-    public ProfileResponseDTO createProfile(ProfileDTO profileDTO, String authHeader) {
-        UserResponseDTO user;
+    public ProfileResponseDTO createProfile(ProfileDTO profileDTO) {
+       UserResponseDTO user;
         try {
-            user = userClient.getMe(authHeader);
-        } catch (FeignException.NotFound nf) {
-            throw new NoSuchElementException("Authenticated user not found");
+            user = userClient.getMe();
         } catch (FeignException fe) {
             throw new RuntimeException("Error calling userservice: " + fe.status(), fe);
         }
+
         if (profileRepository.findById(user.getId()).isPresent()) {
             throw new IllegalStateException("Profile already exists for this user");
         }
@@ -48,24 +50,33 @@ public class ProfileService {
         return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(), saved.getAvatarUrl(), user);
     }
 
-    public ProfileResponseDTO getProfileById(Long id, String authHeader) {
-        Profile profile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile not found"));
-        UserResponseDTO user = userClient.getUserById(profile.getUserId(), authHeader);
-        return new ProfileResponseDTO(profile.getId(), profile.getUserId(), profile.getBio(), profile.getAvatarUrl(), user);
-    }
-    public void deleteProfile(Long id, String authHeader) {
+
+    public ProfileResponseDTO getProfileById(Long id) {
         Profile profile = profileRepository.findById(id)
-                        .orElseThrow(()-> new NoSuchElementException(("Profile not found")));
-        UserResponseDTO user;
+                .orElseThrow(() -> new NoSuchElementException("Profile not found"));
+        UserResponseDTO user = userClient.getUserById(profile.getUserId());
+        return new ProfileResponseDTO(profile.getId(), profile.getUserId(),
+                profile.getBio(), profile.getAvatarUrl(), user);
+    }
+
+    public void deleteProfile(Long id) {
+        Profile profile = profileRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Profile not found"));
+
+        UserResponseDTO currentUser;
         try {
-            user = userClient.getUserById(profile.getUserId(),authHeader);
-        }catch (FeignException fe) {
-            throw new RuntimeException("Error verifying user in userservice", fe);
+            currentUser = userClient.getMe();
+        } catch (FeignException fe) {
+            throw new RuntimeException("Error verifying logged-in user in userservice", fe);
         }
 
-        if (!"ADMIN".equalsIgnoreCase(user.getRole())) {
-            throw new SecurityException("Only ADMIN can delete profiles!");
+        boolean isAdmin = "ADMIN".equalsIgnoreCase(currentUser.getRole());
+        boolean isOwner = currentUser.getId().equals(profile.getUserId());
+
+        if (!isAdmin && !isOwner) {
+            throw new SecurityException("Only ADMIN or profile owner can delete this profile!");
         }
+
         profileRepository.delete(profile);
     }
 }
