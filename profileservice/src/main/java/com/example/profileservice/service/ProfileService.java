@@ -1,9 +1,10 @@
 package com.example.profileservice.service;
 
+import com.example.dto.profile.ProfileDTO;
+import com.example.dto.profile.ProfileResponseDTO;
+import com.example.dto.profile.UserResponseDTO;
 import com.example.profileservice.client.UserClient;
-import com.example.profileservice.dto.ProfileDTO;
-import com.example.profileservice.dto.ProfileResponseDTO;
-import com.example.profileservice.dto.UserResponseDTO;
+
 import com.example.profileservice.model.Profile;
 import com.example.profileservice.repository.ProfileRepository;
 import feign.FeignException;

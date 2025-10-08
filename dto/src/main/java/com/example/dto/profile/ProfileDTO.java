@@ -1,7 +1,6 @@
-package com.example.profileservice.dto;
+package com.example.dto.profile;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class ProfileDTO {
 

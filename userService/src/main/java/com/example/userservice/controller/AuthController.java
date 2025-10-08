@@ -1,6 +1,7 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.model.Role;
+
+import com.example.dto.Role;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.AuthService;

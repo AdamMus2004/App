@@ -1,6 +1,7 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.model.Role;
+
+import com.example.dto.Role;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +45,7 @@ class UserControllerTest {
 
     @Test
     void testPostUsers() throws Exception {
-        User user = new User("Adam","adam@example.com","123",Role.USER);
+        User user = new User("Adam","adam@example.com","123", Role.USER);
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(new User("Adam","adam@example.com","123",Role.USER));
 
         mockMvc.perform(post("/users")

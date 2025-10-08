@@ -1,6 +1,6 @@
 package com.example.wilksservice.service;
 
-import com.example.wilksservice.Gender;
+import com.example.wilksservice.model.Gender;
 import org.springframework.stereotype.Service;
 
 @Service

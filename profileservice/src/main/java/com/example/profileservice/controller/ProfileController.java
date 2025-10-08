@@ -1,7 +1,8 @@
 package com.example.profileservice.controller;
 
-import com.example.profileservice.dto.ProfileDTO;
-import com.example.profileservice.dto.ProfileResponseDTO;
+
+import com.example.dto.profile.ProfileDTO;
+import com.example.dto.profile.ProfileResponseDTO;
 import com.example.profileservice.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

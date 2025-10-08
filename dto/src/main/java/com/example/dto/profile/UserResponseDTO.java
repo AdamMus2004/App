@@ -1,4 +1,4 @@
-package com.example.profileservice.dto;
+package com.example.dto.profile;
 
 public class UserResponseDTO {
     private Long id;

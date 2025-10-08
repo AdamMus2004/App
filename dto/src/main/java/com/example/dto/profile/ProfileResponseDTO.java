@@ -1,4 +1,4 @@
-package com.example.profileservice.dto;
+package com.example.dto.profile;
 
 public class ProfileResponseDTO {
     private Long id;
@@ -7,12 +7,14 @@ public class ProfileResponseDTO {
     private String avatarUrl;
     private UserResponseDTO user;
 
+
     public ProfileResponseDTO(Long id, Long userId, String bio, String avatarUrl, UserResponseDTO user) {
         this.id = id;
         this.userId = userId;
         this.bio = bio;
         this.avatarUrl = avatarUrl;
         this.user = user;
+
     }
 
     public Long getId() {
@@ -33,5 +35,6 @@ public class ProfileResponseDTO {
 
     public UserResponseDTO getUser() {
         return user;
-    }
-}
+    }}
+
+

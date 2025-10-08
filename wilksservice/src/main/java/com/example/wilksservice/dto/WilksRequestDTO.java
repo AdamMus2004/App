@@ -1,6 +1,6 @@
 package com.example.wilksservice.dto;
 
-import com.example.wilksservice.Gender;
+import com.example.wilksservice.model.Gender;
 
 public class WilksRequestDTO {
     private double bodyWeight;

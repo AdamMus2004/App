@@ -1,14 +1,13 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.model.Role;
-import com.example.userservice.model.User;
+
 import com.example.userservice.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 import java.util.Map;
 
 @RestController

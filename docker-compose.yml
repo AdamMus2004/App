@@ -39,7 +39,19 @@ services:
       - "8081:8081"
     networks:
       - app-network
-
+  wilksservice:
+    build: ./wilksservice
+    container_name: wilksservice
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wilksservice_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
