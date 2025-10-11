@@ -3,6 +3,7 @@ package com.example.profileservice.controller;
 
 import com.example.dto.profile.ProfileDTO;
 import com.example.dto.profile.ProfileResponseDTO;
+import com.example.dto.wilks.WilksRequestDTO;
 import com.example.profileservice.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -40,4 +41,13 @@ public class ProfileController {
         profileService.deleteProfile(id);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/update-wilks")
+    public ResponseEntity<ProfileResponseDTO> updateWilks(@RequestBody WilksRequestDTO request) {
+        return ResponseEntity.ok(profileService.updateWilksForLoggedUser(
+                request.getBodyWeight(),
+                request.getTotalLifted(),
+                request.getGender().name()
+        ));
+    }
+
 }

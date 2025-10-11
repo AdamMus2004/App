@@ -1,10 +1,14 @@
 package com.example.profileservice.service;
 
+import com.example.dto.Gender;
 import com.example.dto.profile.ProfileDTO;
 import com.example.dto.profile.ProfileResponseDTO;
 import com.example.dto.profile.UserResponseDTO;
+import com.example.dto.wilks.WilksRequestDTO;
+import com.example.dto.wilks.WilksResponseDTO;
 import com.example.profileservice.client.UserClient;
 
+import com.example.profileservice.client.WilksClient;
 import com.example.profileservice.model.Profile;
 import com.example.profileservice.repository.ProfileRepository;
 import feign.FeignException;
@@ -18,10 +22,12 @@ import java.util.stream.Collectors;
 public class ProfileService {
     private final UserClient userClient;
     private final ProfileRepository profileRepository;
+    private final WilksClient wilksClient;
 
-    public ProfileService(UserClient userClient, ProfileRepository profileRepository) {
+    public ProfileService(UserClient userClient, ProfileRepository profileRepository, WilksClient wilksClient) {
         this.userClient = userClient;
         this.profileRepository = profileRepository;
+        this.wilksClient = wilksClient;
     }
 
     public List<ProfileResponseDTO> getAllProfiles() {
@@ -29,7 +35,7 @@ public class ProfileService {
                 .map(profile -> {
                     UserResponseDTO user = userClient.getUserById(profile.getUserId());
                     return new ProfileResponseDTO(profile.getId(), profile.getUserId(),
-                            profile.getBio(), profile.getAvatarUrl(), user);
+                            profile.getBio(), profile.getAvatarUrl(), profile.getWilksScore());
                 })
                 .collect(Collectors.toList());
     }
@@ -42,13 +48,13 @@ public class ProfileService {
             throw new RuntimeException("Error calling userservice: " + fe.status(), fe);
         }
 
-        if (profileRepository.findById(user.getId()).isPresent()) {
+        if (profileRepository.findByUserId(user.getId()).isPresent()) {
             throw new IllegalStateException("Profile already exists for this user");
         }
 
         Profile profile = new Profile(user.getId(), profileDTO.getBio(), profileDTO.getAvatarUrl());
         Profile saved = profileRepository.save(profile);
-        return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(), saved.getAvatarUrl(), user);
+        return new ProfileResponseDTO(saved.getId(), saved.getUserId(), saved.getBio(), saved.getAvatarUrl(), profile.getWilksScore());
     }
 
 
@@ -57,7 +63,7 @@ public class ProfileService {
                 .orElseThrow(() -> new NoSuchElementException("Profile not found"));
         UserResponseDTO user = userClient.getUserById(profile.getUserId());
         return new ProfileResponseDTO(profile.getId(), profile.getUserId(),
-                profile.getBio(), profile.getAvatarUrl(), user);
+                profile.getBio(), profile.getAvatarUrl(), profile.getWilksScore());
     }
 
     public void deleteProfile(Long id) {
@@ -80,4 +86,21 @@ public class ProfileService {
 
         profileRepository.delete(profile);
     }
+    public ProfileResponseDTO updateWilksForLoggedUser(Double bodyWeight, Double totalLifted, String gender) {
+        UserResponseDTO user = userClient.getMe();
+        Profile profile = profileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("Profile not found for user"));
+        WilksRequestDTO request = new WilksRequestDTO(bodyWeight, totalLifted, Gender.valueOf(gender.toUpperCase()));
+        WilksResponseDTO response = wilksClient.calculateWilks(request);
+        profile.setWilksScore(response.getWilksScore());
+        Profile updated = profileRepository.save(profile);
+        return new ProfileResponseDTO(
+                updated.getId(),
+                updated.getUserId(),
+                updated.getBio(),
+                updated.getAvatarUrl(),
+                updated.getWilksScore()
+        );
+    }
+
 }

@@ -13,7 +13,7 @@ public class Profile {
 
     private String bio;
     private String avatarUrl;
-
+    private Double wilksScore;
     public Profile() {}
 
     public Profile(Long userId, String bio, String avatarUrl) {
@@ -54,4 +54,11 @@ public class Profile {
         this.avatarUrl = avatarUrl;
     }
 
+    public Double getWilksScore() {
+        return wilksScore;
+    }
+
+    public void setWilksScore(Double wilksScore) {
+        this.wilksScore = wilksScore;
+    }
 }

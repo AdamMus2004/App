@@ -13,6 +13,11 @@
     <artifactId>userservice</artifactId>
     <name>userservice</name>
 
+    <properties>
+        <java.version>17</java.version>
+        <spring-boot.version>3.3.10</spring-boot.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
