@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     networks:
       - app-network
 
@@ -26,6 +27,7 @@ services:
       - "8080:8080"
     networks:
       - app-network
+
   profileservice:
     build: ./profileservice
     container_name: profileservice

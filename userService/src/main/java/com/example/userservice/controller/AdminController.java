@@ -34,7 +34,7 @@ public class AdminController {
 
     //PUT /admin/users/{id}/role
     @PutMapping("/users/{id}/role")
-    public ResponseEntity<?> changeRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> changeRole(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
         return userRepository.findById(id)
                 .map(user -> {
                     try {
@@ -52,7 +52,7 @@ public class AdminController {
 
     //DELETE /admin/users/{id}
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return ResponseEntity.ok(Map.of("message","User deleted"));
