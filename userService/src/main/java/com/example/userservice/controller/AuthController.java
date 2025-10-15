@@ -25,8 +25,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
     }
-
-    // ------------------- REGISTER -------------------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -48,7 +46,6 @@ public class AuthController {
         ));
     }
 
-    // ------------------- LOGIN -------------------
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String,String> body) {
         String email = body.get("email");
@@ -66,7 +63,6 @@ public class AuthController {
                 .orElseGet(() -> ResponseEntity.status(401).body(Map.of("error","Invalid credential")));
     }
 
-    // ------------------- LOGOUT -------------------
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(value="Authorization", required = false) String authHeader,
                                     @RequestBody(required=false) Map<String,String> body) {
@@ -79,7 +75,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message","Logged out successfully"));
     }
 
-    // ------------------- GET ME -------------------
     @GetMapping("/me")
     public ResponseEntity<?> getMe(Authentication authentication) {
         if (authentication == null) return ResponseEntity.status(401).body(Map.of("error","Not authenticated"));
@@ -93,7 +88,6 @@ public class AuthController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
 
-    // ------------------- UPDATE ME -------------------
     @PutMapping("/me")
     public ResponseEntity<?> updateMe(Authentication authentication, @RequestBody Map<String,String> updates) {
         if (authentication == null) return ResponseEntity.status(401).body(Map.of("error","Not authenticated"));
@@ -108,13 +102,11 @@ public class AuthController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
 
-    // ------------------- ADMIN: GET ALL USERS -------------------
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // ------------------- ADMIN: GET USER BY ID -------------------
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
         return userRepository.findById(id)
@@ -127,7 +119,6 @@ public class AuthController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
 
-    // ------------------- ADMIN: UPDATE USER ROLE -------------------
     @PutMapping("/users/{id}/role")
     public ResponseEntity<?> updateUserRole(@PathVariable("id") Long id, @RequestBody Map<String,String> body) {
         return userRepository.findById(id)
@@ -144,7 +135,6 @@ public class AuthController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error","User not found")));
     }
 
-    // ------------------- ADMIN: DELETE USER -------------------
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         if (userRepository.existsById(id)) {

@@ -61,7 +61,7 @@ public class ProfileService {
     public ProfileResponseDTO getProfileById(Long id) {
         Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Profile not found"));
-        UserResponseDTO user = userClient.getUserById(profile.getUserId());
+
         return new ProfileResponseDTO(profile.getId(), profile.getUserId(),
                 profile.getBio(), profile.getAvatarUrl(), profile.getWilksScore());
     }
@@ -87,13 +87,20 @@ public class ProfileService {
         profileRepository.delete(profile);
     }
     public ProfileResponseDTO updateWilksForLoggedUser(Double bodyWeight, Double totalLifted, String gender) {
+        if (bodyWeight == null || bodyWeight <= 0 || totalLifted == null || totalLifted <= 0) {
+            throw new IllegalArgumentException("Body weight and total lifted must be greater than 0");
+        }
+
         UserResponseDTO user = userClient.getMe();
         Profile profile = profileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("Profile not found for user"));
+
         WilksRequestDTO request = new WilksRequestDTO(bodyWeight, totalLifted, Gender.valueOf(gender.toUpperCase()));
         WilksResponseDTO response = wilksClient.calculateWilks(request);
+
         profile.setWilksScore(response.getWilksScore());
         Profile updated = profileRepository.save(profile);
+
         return new ProfileResponseDTO(
                 updated.getId(),
                 updated.getUserId(),
@@ -102,5 +109,6 @@ public class ProfileService {
                 updated.getWilksScore()
         );
     }
+
 
 }

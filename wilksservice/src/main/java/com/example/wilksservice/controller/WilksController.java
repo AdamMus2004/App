@@ -1,6 +1,7 @@
 package com.example.wilksservice.controller;
-import com.example.wilksservice.dto.WilksRequestDTO;
-import com.example.wilksservice.dto.WilksResponseDTO;
+
+import com.example.dto.wilks.WilksRequestDTO;
+import com.example.dto.wilks.WilksResponseDTO;
 import com.example.wilksservice.service.WilksService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class WilksController {
 
     @PostMapping("/calculate")
     public ResponseEntity<WilksResponseDTO> calculate(@RequestBody WilksRequestDTO requestDTO) {
-        double score = wilksService.calculateWilks(requestDTO.getBodyWeight(), requestDTO.getTotalLift(), requestDTO.getGender());
+        double score = wilksService.calculateWilks(requestDTO.getBodyWeight(), requestDTO.getTotalLifted(), requestDTO.getGender());
         return ResponseEntity.ok(new WilksResponseDTO(score));
     }
 }

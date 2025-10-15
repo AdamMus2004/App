@@ -32,22 +32,23 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Long id) {
+    public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable("id") Long id) {
         return ResponseEntity.ok(profileService.getProfileById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProfile(@PathVariable("id") Long id) {
         profileService.deleteProfile(id);
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/update-wilks")
-    public ResponseEntity<ProfileResponseDTO> updateWilks(@RequestBody WilksRequestDTO request) {
+    public ResponseEntity<ProfileResponseDTO> updateWilks(@Valid @RequestBody WilksRequestDTO request) {
         return ResponseEntity.ok(profileService.updateWilksForLoggedUser(
                 request.getBodyWeight(),
                 request.getTotalLifted(),
                 request.getGender().name()
         ));
     }
+
 
 }
