@@ -100,8 +100,8 @@ docker logs -f wilksservice
 ```json
 {
   "id": 1,
-  "email": "john.doe@example.com",
-  "name": "John Doe",
+  "email": "user_1@example.com",
+  "name": "user_1",
   "role": "USER"
 }
 ```
