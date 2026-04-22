@@ -97,12 +97,13 @@ docker logs -f wilksservice
   "email": "user_1@example.com"
 }
 ```
+**Sample Response:**
 ```json
 {
   "id": 1,
   "role": "USER",
   "name": "user_1",
-  "email": "user_1@example.com",
+  "email": "user_1@example.com"
 }
 ```
 
